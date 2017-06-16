@@ -64,6 +64,9 @@ class Node:
                 return n
         raise IndexError('Node not found')
 
+    def interpret_message(self, message):
+        print(message)
+
     # Open port to listen on
     def listen_on_port(self):
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -71,6 +74,7 @@ class Node:
         print("Listening on port", self.port)
         while self.running:
             break
+
 
     # Get random neighbours from nodelist
     def get_rnd_neighbours(self):
