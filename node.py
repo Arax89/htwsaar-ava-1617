@@ -17,13 +17,13 @@ class Node:
     def readfile(self):
         print(self.filepath)
 
-'Adding commandline arguments'
+# Adding commandline arguments'
 parser = argparse.ArgumentParser()
 parser.add_argument("endpointfile", help="Path to the endpoint file")
 parser.add_argument("nodeid", help="Desired id from the endpoint file")
 
-'Parsing commandline arguments'
+# Parsing commandline arguments'
 args = parser.parse_args()
 
-'Instanciating node process'
+# Instantiating node process'
 Node(filepath=args.endpointfile, node_id=args.nodeid)
