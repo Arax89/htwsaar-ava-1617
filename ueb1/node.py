@@ -7,10 +7,10 @@ import socket
 import sys
 import threading
 
-from ueb1.Graph import Graph
+from Graph import Graph
 
-from ueb1.NodeMessage import MsgTypes
-from ueb1.NodeMessage import NodeMessage
+from NodeMessage import MsgTypes
+from NodeMessage import NodeMessage
 
 
 # class Node(Process):

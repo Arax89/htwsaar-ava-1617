@@ -2,8 +2,8 @@ import argparse
 import socket
 import sys
 
-from ueb1.NodeMessage import MsgTypes
-from ueb1.NodeMessage import NodeMessage
+from NodeMessage import MsgTypes
+from NodeMessage import NodeMessage
 
 parser = argparse.ArgumentParser()
 parser.add_argument("endpoints", help="Path to the endpoint file", type=str)
