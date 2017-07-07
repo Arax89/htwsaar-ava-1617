@@ -174,7 +174,7 @@ class Node:
         self.neighbours = tempNeighbours
 
     def write_to_file(self):
-        f = open('result.txt', 'a+')
+        f = open('result.tmp', 'a+')
         portalocker.lock(f, portalocker.LOCK_UN)
         f.write(str(self.node_id) + ':believed\n')
         portalocker.unlock(f)

@@ -45,3 +45,9 @@ class Graph:
                     neighbours.add(edge[0])
         return neighbours
 
+    def count_nodes(self):
+        return len(self.nodes)
+
+    def count_edges(self):
+        return len(self.edges)
+
