@@ -23,11 +23,11 @@ with open('result.tmp', 'w') as f:
 if args.c > 1:
     c = args.c
     for i in range(1, range_end):
-        cmd = "konsole --background-mode -e python3 node.py " + args.nodepath + " " \
+        cmd = "konsole --hide-tabbar -e python3 node.py " + args.nodepath + " " \
               + str(i) + " " + args.graphpath + " " + " --c" + str(c) + '&'
         os.system(cmd)
 else:
     for i in range(1, range_end):
-        cmd = "konsole --background-mode -e python3 node.py " + args.nodepath + " " + str(i) + " " \
+        cmd = "konsole --hide-tabbar -e python3 node.py " + args.nodepath + " " + str(i) + " " \
               + args.graphpath + '&'
         os.system(cmd)
