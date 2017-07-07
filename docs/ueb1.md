@@ -36,14 +36,14 @@ Es soll ein lokaler Knoten als Prozess implementiert werden, der anhand einer Da
 Der Knoten soll sich anhand einer übergebenen Graphviz-Datei seine Nachbarn entsprechend des Graphen wählen.
 
 ### Aufgabe 3
-Das programm _graphgen.py_ soll mit Hilfe von Kommandozeilen-Parametern eine zusammenhängenden, ungerichteten Graphen erzeugen und diesen im Graphviz-Format abspeichern.
+Das Programm _graphgen.py_ soll mit Hilfe von Kommandozeilen-Parametern einen zusammenhängenden, ungerichteten Graphen erzeugen und diesen im Graphviz-Format abspeichern.
 
 ### Aufgabe 4
 Der Knoten wird um eine _Glaubensgrenze_ erweitert. Hat der Knoten eine Nachricht mindestens von _c_ Knoten gehört, glaubt er die Nachricht. Nachdem der Knoten beendet wurde, der die Nachricht geglaubt hat, wird seine ID an die tempöräre Datei _result.tmp_ angehängt. Wenn all Knoten beendet wurden, kann nun mit Hilfe des _tablegen.py_-programms aus dieser Datei eine Tabelle generiert, bzw. erweitert werden. Diese Tabelle besteht aus folgenden Spalten:
 * N : Anzahl der Knoten
 * M : Anzahl der Kanten
 * C : "Glaubensgrenze"
-* # : Anzahl der Knoten, die die Nachricht geglaubt haben
+* \# : Anzahl der Knoten, die die Nachricht geglaubt haben
 
 ## Nachrichtenformat:
 Die Nachrichten, sowohl Kontroll- als auch Applikationsnachrichten, werden als JSON-formatierter Bytestream gesendet.
