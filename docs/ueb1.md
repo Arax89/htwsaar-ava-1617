@@ -81,5 +81,5 @@ Eine Nachricht sieht decodiert folgendermaßen aus:
 ![Userinteraktionen](Userinteraktionen.png)
 
 ## Erkenntnisse
-[Tabelle Aufgabe 4](../ueb1/Tabelle.md)
+[Tabelle Aufgabe 4](../ueb1/table.md)
     
