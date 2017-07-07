@@ -41,4 +41,5 @@ Alle vom Benutzer von außen gesendete Nachrichten sind vom Typ "control". Die K
 Eine Außnahme bildet hierbei die "stopall". Diese Nachricht, vom Typ "control" wird von außen durch den Benutzer an einen Knoten gesendet und dieser leitet sie an all seine Nachbarknoten weiter. Dieser wiederum leiten die Nachricht wieder an alle Nachbarn weiter. Dies geschieht solange, bis alle Knoten gestoppt wurden. 
 
 Eine Nachricht sieht decodiert folgendermaßen aus:
+
     From: [sender], To: [empfänger], MsgType: [NachrichtenTyp], Msg: [Nachricht]
