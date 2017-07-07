@@ -1,3 +1,8 @@
+---
+title: HTW Saar AVA Übung 1
+parent: index.md
+---
+
 # HTW Saar AVA Übung 1
 
 ## Erzeugen eines Graphen:
