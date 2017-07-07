@@ -32,6 +32,8 @@
 ### Aufgabe 1
 Es soll ein lokaler Knoten als Prozess implementiert werden, der anhand einer Datei mit Endpunkten (ID, IP-Adresse, Port) einen Listen-Port öffnet und auf empfangene Nachrichten reagiert bzw. auch aktiv Nachrichten an seine Nachbarn versenden kann. Nachbarn sind hierbei drei zufällig aus der Endpunkt-Datei gewählte Knoten. Der Benutzer soll einen Knoten aus der Datei mit Endpunkten auswählen können und an diesen eine Nachricht schicken können. Hat diese Nachricht den Inhalt "start" wird der Empfängerknoten als Initiator ausgewählt. Dieser beginnt nach Erhalt der Nachricht seine ID an all seine Nachbarn zu senden. Sobald ein anderer Knoten eine Nachricht erhalten hat, sendet er ebenfalls an all seine Nachbarn seine ID, falls er dies noch nicht getan hat. Jede empfangene oder gesendete Nachricht wird mit Zeitstempel ausgegeben. 
 
+Empfängt ein Knoten eine Nachricht mit dem Inhalt "stop", terminiert er. Empfängt er "stopall", leitet er die Nachricht an alle Nachbarknoten weiter und terminiert dann.
+
 ### Aufgabe 2
 Der Knoten soll sich anhand einer übergebenen Graphviz-Datei seine Nachbarn entsprechend des Graphen wählen.
 
