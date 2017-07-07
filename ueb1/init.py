@@ -11,10 +11,10 @@ args = parser.parse_args()
 if os.path.exists('result.tmp'):
     os.remove('result.tmp')
 
-g: Graph = Graph(args.graphpath)
+g = Graph(args.graphpath)
 
-num_nodes: int = g.count_nodes()
-num_edges: int = g.count_edges()
+num_nodes = g.count_nodes()
+num_edges = g.count_edges()
 range_end = num_nodes + 1
 
 with open('result.tmp', 'w') as f:
