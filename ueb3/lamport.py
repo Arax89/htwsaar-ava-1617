@@ -1,103 +1,134 @@
-import sys
-import argparse
+import errno
 import socket
+import argparse
 import threading
 import time
-from queue import PriorityQueue
+import colorama
+from _thread import allocate_lock
 
-from LamportMessage import MsgTypes, LamportMessage
+from LamportMessage import LamportMessage, MsgTypes
 
 
 class Lamport:
-    def __init__(self, nid: int):
-        self.lock = threading.Lock
-        self.host = 'localhost'
-        self.port = 5000 + nid
-        self.pendingRequest = False
-        self.nid = nid
-        self.pendingReplies = []
-        self.requestQueue = PriorityQueue()
+    def __init__(self, nid: int, countNeighbours: int):
+        self.lock = allocate_lock()
+        self.countReady = 0
         self.running = True
-        self.zeroesRead = 0
-        self.time = 0
-        self.time_stamp = 0
-
-        if nid % 2 == 1:
-            self.even = False
-            self.partner = nid + 1
-        else:
+        self.id = nid
+        self.host = socket.gethostname()
+        self.port = 5000 + nid
+        self.countNodes = countNeighbours
+        if nid % 2 == 0:
             self.even = True
-            self.partner = nid - 1
+            self.partnerID = nid - 1
+        else:
+            self.even = False
+            self.partnerID = nid + 1
 
-    def handle_client_connection(self, client_socket):
-        msg = client_socket.recv(1024)
-        client_socket.close()
-        self.interpret_message(msg)
+        self.neighbours = set()
 
-    def increase_time(self, msg_timestamp):
-        self.time = max(msg_timestamp, self.time) + 1
-
-    def interpret_message(self, msg):
+    def interpret(self, msg):
         lmsg = LamportMessage(jsonMsg=msg.decode())
         lmsg.decodeLamport()
         if lmsg.msgtype == MsgTypes.Request:
-            self.increase_time(lmsg.time_stamp)
-            self.requestQueue.put((lmsg.time_stamp, lmsg.sender))
-            self.reply(lmsg.sender)
+            pass
         elif lmsg.msgtype == MsgTypes.Reply:
-            self.increase_time(lmsg.time_stamp)
-            if self.time_stamp < lmsg.time_stamp:
-                self.replies.add(lmsg.sender)
+            pass
         elif lmsg.msgtype == MsgTypes.Release:
-            self.increase_time(lmsg.time_stamp)
-            self.requestQueue.queue.remove((lmsg.request_timestamp, lmsg.sender))
+            pass
         elif lmsg.msgtype == MsgTypes.Terminate:
-            self.terminate()
+            pass
+        elif lmsg.msgtype == MsgTypes.Remove:
+            self.removeFromNeighbours(lmsg.sender)
+        elif lmsg.msgtype == MsgTypes.Ready:
+            self.addToNeighbours(lmsg.sender)
+            self.lock.acquire()
+            self.countReady += 1
+            self.lock.release()
 
-    def terminate(self):
-        self.running = False
-        exit(0)
+    def removeFromNeighbours(self, nid: int):
+        self.neighbours.remove(nid)
+        print("Neighbours:", self.neighbours)
 
-    def release(self, request):
-        self.time += 1
-        self.time_stamp = self.time
-        releaseMsg = LamportMessage(sender=self.nid, msgtype=MsgTypes.Release, timestamp=self.time_stamp,
-                                    request_timestamp=request[0])
-        self.send(releaseMsg)
-        self.pendingRequest = False
+    def addToNeighbours(self, nid: int):
+        self.neighbours.add(nid)
+        print("Neighbours:", self.neighbours)
 
-    def enterCS(self):
-        print("Entered CS")
-        print(self.nid, "RequestQueue:", self.requestQueue.queue)
-        f = open('x', 'r+')
-        ch = f.read(1)
-        x = int(ch)
-        if x == 0:
-            self.zeroesRead += 1
-        if self.even:
-            x -= 1
-        else:
-            x += 1
-        f.seek(0)
-        f.write(str(x))
-        f.seek(0, 2)
-        f.write('\n' + str(self.nid))
-        f.close()
+    def listen(self):
+        self.listenSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.listenSocket.bind((self.host, self.port))
+        self.listenSocket.listen(0)
+        try:
+            while self.running:
+                conn, addr = self.listenSocket.accept()
+                msg = conn.recv(2048)
+                sendMsg = "OK from " + str(self.id)
+                conn.send(sendMsg.encode())
+                print(colorama.Fore.CYAN, msg.decode())
+                self.interpret(msg)
+                conn.close()
+            self.listenSocket.close()
+        finally:
+            self.listenSocket.close()
 
-        request = self.requestQueue.get()
-        self.release(request)
+    def send(self, receiverPort: int, sendMsg):
+        sendSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            sendSocket.connect((self.host, receiverPort))
+            sendSocket.send(sendMsg)
+            # print(sendMsg)
+            recvMsg = sendSocket.recv(1024)
+            sendSocket.close()
+            print(colorama.Fore.GREEN, recvMsg.decode())
+        except socket.error as serr:
+            if serr == errno.ECONNREFUSED:
+                print("Connection refused, try again...")
+                self.send(receiverPort=receiverPort, sendMsg=sendMsg)
+        finally:
+            sendSocket.close()
 
-    def server(self):
-        self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server.bind((self.host, self.port))
-        self.server.listen(5)
+    def ready(self):
+        lmsg = LamportMessage(sender=self.id, msgtype=MsgTypes.Ready)
+        sendMsg = lmsg.encodeLamport()
+        for i in range(1, self.countNodes + 1):
+            if i != self.id:
+                receiverPort = 5000 + i
+                self.send(receiverPort=receiverPort, sendMsg=sendMsg)
 
-    def client(self):
-        pass
+    def remove(self):
+        lmsg = LamportMessage(sender=self.id, msgtype=MsgTypes.Remove)
+        sendMsg = lmsg.encodeLamport()
+        self.lock.acquire()
+        for i in self.neighbours:
+            receivePort = 5000 + i
+            self.send(receiverPort=receivePort, sendMsg=sendMsg)
+        self.lock.release()
 
     def run(self):
-        serverthread = threading.Thread(target=self.server)
-        clientthread = threading.Thread(target=self.client)
-        serverthread.start()
-        clientthread.start()
+        self.listenthread = threading.Thread(target=self.listen)
+        self.listenthread.start()
+        time.sleep(2)
+        self.ready()
+        while self.countReady < self.countNodes - 1:
+            time.sleep(1)
+        self.remove()
+        self.lock.acquire()
+        print("in lock")
+        self.running = False
+        self.lock.release()
+        print(self.running)
+        print("Exit")
+        if self.listenthread.is_alive():
+            self.running = False
 
+
+parser = argparse.ArgumentParser()
+parser.add_argument("nodeid", help="id for the node", type=int)
+parser.add_argument("countNeighbours", help="Count of all nodes", type=int)
+# Parsing commandline arguments'
+args = parser.parse_args()
+
+# Instantiating node process'
+n = Lamport(nid=args.nodeid, countNeighbours=args.countNeighbours)
+# n.start()
+n.run()
