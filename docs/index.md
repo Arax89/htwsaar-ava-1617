@@ -27,3 +27,18 @@
         endpoints   Pfad zur Endpoint-Datei
         nid         ID des Empfänger-Knoten
         msg         Die Nachricht die gesendet werden soll
+
+## Nachrichtenformat:
+Die Nachrichten, sowohl Kontroll- als auch Applikationsnachrichten, werden als JSON-formatierter Bytestream gesendet.
+Das Nachrichtenformat ist in der Klasse NodeMessage in der Datei NodeMessage.py definiert. 
+
+Nachrichten können einen folgenden Typen haben:
+* control
+* application
+* unknown
+
+Alle vom Benutzer von außen gesendete Nachrichten sind vom Typ "control". Die Knoten kommunizieren mit Nachrichten vom Typ "application". 
+Eine Außnahme bildet hierbei die "stopall". Diese Nachricht, vom Typ "control" wird von außen durch den Benutzer an einen Knoten gesendet und dieser leitet sie an all seine Nachbarknoten weiter. Dieser wiederum leiten die Nachricht wieder an alle Nachbarn weiter. Dies geschieht solange, bis alle Knoten gestoppt wurden. 
+
+Eine Nachricht sieht decodiert folgendermaßen aus:
+        From: [sender], To: [empfänger], MsgType: [NachrichtenTyp], Msg: [Nachricht]
