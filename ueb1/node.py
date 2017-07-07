@@ -6,6 +6,7 @@ import random
 import socket
 import sys
 import threading
+import portalocker
 
 from Graph import Graph
 
@@ -48,7 +49,9 @@ class Node:
         self.nodelist = self.getendpoints()
         self.get_neighbours_from_graph()
         self.listen_on_port()
-        # self.get_rnd_neighbours()
+        if self.believing:
+            self.write_to_file()
+            # self.get_rnd_neighbours()
 
     def print_message(self, nmsg: NodeMessage, send: bool):
         if send:
@@ -169,6 +172,13 @@ class Node:
         for i in neighbour_ids:
             tempNeighbours.append(self.findIDinNodeList(i))
         self.neighbours = tempNeighbours
+
+    def write_to_file(self):
+        f = open('result.txt', 'a+')
+        portalocker.lock(f, portalocker.LOCK_UN)
+        f.write(str(self.node_id) + ':believed\n')
+        portalocker.unlock(f)
+        f.close()
 
 
 # Adding commandline arguments'
