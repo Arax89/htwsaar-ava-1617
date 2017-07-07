@@ -81,5 +81,5 @@ Eine Nachricht sieht decodiert folgendermaßen aus:
 ![Userinteraktionen](Userinteraktionen.png)
 
 ## Erkenntnisse
-[Tabelle Aufgabe 4](../ueb1/table.md)
+Sind bei einer Anzahl _N_ Knoten, alle Knoten miteinander verbunden, wird das Gerücht geglaubt, solange die Glaubensgrenze _C_ kleiner oder gleich _N-1_ ist. Ansonsten ist die Anzahl der "gläubigen" Knoten abhängig von der Anzahl an Kanten, die der Knoten besitzt. Ist die Anzahl _K_ der Kanten größer oder gleich der Glaubensgrenze _C_ glaubt der Knoten das Gerücht. (Vergleiche [Tabelle Aufgabe 4](../ueb1/table.md))
     
