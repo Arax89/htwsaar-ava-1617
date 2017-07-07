@@ -24,7 +24,7 @@ if args.c > 1:
     c = args.c
     for i in range(1, range_end):
         cmd = "konsole -e python3 node.py " + args.nodepath + " " \
-              + str(i) + " " + args.graphpath + " " + " --c" + str(c) + '&'
+              + str(i) + " " + args.graphpath + " " + " --c " + str(c) + '&'
         os.system(cmd)
 else:
     for i in range(1, range_end):
