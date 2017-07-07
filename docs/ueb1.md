@@ -68,3 +68,18 @@ Eine Nachricht sieht decodiert folgendermaßen aus:
 
     From: [sender], To: [empfänger], MsgType: [NachrichtenTyp], Msg: [Nachricht]
     
+## Besonderheiten der Implementierung
+### Schwächen
+* Kaum Fehlerfälle abgefangen
+* Abhängig von korrekter Endpunkt-Datei (keine doppelten IDs, IDs aufsteigend sortiert, Ports sind einzigartig)
+
+### Stärken
+* Skalierbar
+* Einfach zu benutzen
+    
+## Beispielablauf
+![Userinteraktionen](Userinteraktionen.png)
+
+## Erkenntnisse
+[Tabelle Aufgabe 4](../ueb1/Tabelle.md)
+    
