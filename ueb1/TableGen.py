@@ -2,8 +2,8 @@ import argparse
 import os
 
 parser = argparse.ArgumentParser()
-parser.add_argument("source", help="The path to the resultfile", type="str")
-parser.add_argument("target", help="The path to the targetfile", type="str")
+parser.add_argument("source", help="The path to the resultfile", type=str)
+parser.add_argument("target", help="The path to the targetfile", type=str)
 args = parser.parse_args()
 n = 0
 m = 0
