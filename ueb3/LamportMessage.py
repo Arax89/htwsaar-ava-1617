@@ -4,8 +4,10 @@ from enum import Enum, unique
 
 @unique
 class MsgTypes(Enum):
+    Acknowledge = "Acknowledge"
     Request = "Request"
     Ready = "Ready"
+    Register = "Register"
     Reply = "Reply"
     Release = "Release"
     Remove = "Remove"
@@ -39,6 +41,8 @@ class LamportMessage:
                 self.sender = int(self.jsonmsg["Sender"])
             if self.jsonmsg["MsgType"] == MsgTypes.Request.value:
                 self.msgtype = MsgTypes.Request
+            elif self.jsonmsg["MsgType"] == MsgTypes.Acknowledge.value:
+                self.msgtype = MsgTypes.Acknowledge
             elif self.jsonmsg["MsgType"] == MsgTypes.Reply.value:
                 self.msgtype = MsgTypes.Reply
             elif self.jsonmsg["MsgType"] == MsgTypes.Release.value:
@@ -47,6 +51,8 @@ class LamportMessage:
                 self.msgtype = MsgTypes.Ready
             elif self.jsonmsg["MsgType"] == MsgTypes.Remove.value:
                 self.msgtype = MsgTypes.Remove
+            elif self.jsonmsg["MsgType"] == MsgTypes.Register.value:
+                self.msgtype = MsgTypes.Register
             else:
                 self.msgtype = MsgTypes.Terminate
         except json.JSONDecodeError as err:

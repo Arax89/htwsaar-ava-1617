@@ -3,7 +3,7 @@ import socket
 import argparse
 import threading
 import time
-import colorama
+from colorama import init, Fore
 from _thread import allocate_lock
 
 from LamportMessage import LamportMessage, MsgTypes
@@ -12,8 +12,9 @@ from LamportMessage import LamportMessage, MsgTypes
 class Lamport:
     def __init__(self, nid: int, countNeighbours: int):
         self.lock = allocate_lock()
-        self.countReady = 0
+        self.readyset = set()
         self.running = True
+        self.interpreting = False
         self.id = nid
         self.host = socket.gethostname()
         self.port = 5000 + nid
@@ -42,9 +43,8 @@ class Lamport:
             self.removeFromNeighbours(lmsg.sender)
         elif lmsg.msgtype == MsgTypes.Ready:
             self.addToNeighbours(lmsg.sender)
-            self.lock.acquire()
-            self.countReady += 1
-            self.lock.release()
+            self.readyset.add(lmsg.sender)
+        self.interpreting = False
 
     def removeFromNeighbours(self, nid: int):
         self.neighbours.remove(nid)
@@ -52,21 +52,27 @@ class Lamport:
 
     def addToNeighbours(self, nid: int):
         self.neighbours.add(nid)
+        print("Added ", nid)
         print("Neighbours:", self.neighbours)
 
     def listen(self):
         self.listenSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.listenSocket.bind((self.host, self.port))
-        self.listenSocket.listen(0)
+        self.listenSocket.listen(5)
         try:
             while self.running:
                 conn, addr = self.listenSocket.accept()
-                msg = conn.recv(2048)
+                msg = conn.recv(4096)
+                print(Fore.CYAN, msg.decode())
+                self.interpreting = True
+                self.interpret(msg)
+                while(self.interpreting):
+                    print("Blocking")
+                    pass
                 sendMsg = "OK from " + str(self.id)
                 conn.send(sendMsg.encode())
-                print(colorama.Fore.CYAN, msg.decode())
-                self.interpret(msg)
                 conn.close()
+                print(Fore.RESET)
             self.listenSocket.close()
         finally:
             self.listenSocket.close()
@@ -77,9 +83,11 @@ class Lamport:
             sendSocket.connect((self.host, receiverPort))
             sendSocket.send(sendMsg)
             # print(sendMsg)
-            recvMsg = sendSocket.recv(1024)
+            print("Wating for answer...")
+            recvMsg = sendSocket.recv(4096)
             sendSocket.close()
-            print(colorama.Fore.GREEN, recvMsg.decode())
+            print(Fore.GREEN, recvMsg.decode())
+            print(Fore.RESET)
         except socket.error as serr:
             if serr == errno.ECONNREFUSED:
                 print("Connection refused, try again...")
@@ -98,28 +106,28 @@ class Lamport:
     def remove(self):
         lmsg = LamportMessage(sender=self.id, msgtype=MsgTypes.Remove)
         sendMsg = lmsg.encodeLamport()
-        self.lock.acquire()
-        for i in self.neighbours:
+        tmp = self.neighbours.copy()
+        for i in tmp:
             receivePort = 5000 + i
             self.send(receiverPort=receivePort, sendMsg=sendMsg)
-        self.lock.release()
 
     def run(self):
+        init()
         self.listenthread = threading.Thread(target=self.listen)
         self.listenthread.start()
         time.sleep(2)
         self.ready()
-        while self.countReady < self.countNodes - 1:
-            time.sleep(1)
+        while len(self.readyset) < self.countNodes - 1:
+            pass
         self.remove()
-        self.lock.acquire()
-        print("in lock")
         self.running = False
-        self.lock.release()
         print(self.running)
-        print("Exit")
+
         if self.listenthread.is_alive():
             self.running = False
+        print("Neighbours:", self.neighbours)
+        print("Exit")
+        exit(0)
 
 
 parser = argparse.ArgumentParser()
