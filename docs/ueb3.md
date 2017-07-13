@@ -63,4 +63,4 @@ Hat der Worker-Thread drei mal eine 0 eingelesen, sendet er außerdem die Termin
 * Deadlock nach Terminierung der ersten beiden Prozesse
 
 ## Fazit
-Für die Realisierung dieser Aufgabe mussten einige Software-Patterns in der Theorie wiederholt werden, wie z.B. Producer/Consumer pattern. Das eigentliche Ziel, die Implementierung des Lamport-Algorithmus, wurde erreicht, obwohl das Programm nicht alle Anforderungen der Aufgabe erfüllt (s. "Deadlock nach remove"). 
+Für die Realisierung dieser Aufgabe mussten einige Software-Patterns in der Theorie wiederholt werden, wie z.B. Producer/Consumer pattern. Desweiteren wurden Locks/Condition variables verwendet. Das eigentliche Ziel, die Implementierung des Lamport-Algorithmus, wurde erreicht, obwohl das Programm nicht alle Anforderungen der Aufgabe erfüllt (s. "Deadlock nach remove"). 
