@@ -68,4 +68,4 @@ class LamportMessage:
         return self.jsonmsg.encode()
 
     def __str__(self):
-        return "Sender=" + str(self.sender) + ", MsgType=" + str(self.msgtype.value) + ", TS=" + str(self.time_stamp)
+        return "Sender=" + str(self.sender) + ", MsgType=" + str(self.msgtype) + ", TS=" + str(self.time_stamp)

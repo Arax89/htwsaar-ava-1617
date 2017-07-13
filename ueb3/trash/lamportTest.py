@@ -39,11 +39,12 @@ class Lamport():
             self.partnerID = nid + 1
 
     def checkQueue(self):
-        head = self.requestQueue.queue[0]
-        print("Check Queuehead of", self.nid, ":", head)
-        requestID = head[1]
-        if requestID == self.nid:
-            self.enterCS()
+        if not self.requestQueue.empty():
+            head = self.requestQueue.queue[0]
+            print("Check Queuehead of", self.nid, ":", head)
+            requestID = head[1]
+            if requestID == self.nid:
+                self.enterCS()
 
     def request(self):
         self.lock.acquire()
@@ -107,6 +108,7 @@ class Lamport():
         elif lmsg.msgtype == MsgTypes.Release:
             self.increase_time(lmsg.time_stamp)
             self.requestQueue.queue.remove((lmsg.request_timestamp, lmsg.sender))
+            self.checkQueue()
         elif lmsg.msgtype == MsgTypes.Terminate:
             self.terminate()
         elif lmsg.msgtype == MsgTypes.Remove:
@@ -239,7 +241,7 @@ class Lamport():
             if not self.pendingRequest:
                 print(self.nid, ":Sending request...")
                 self.request()
-                time.sleep(0.5)
+                # time.sleep(0.5)
         self.terminate()
         if self.otherNodes:
             self.removeMe()
