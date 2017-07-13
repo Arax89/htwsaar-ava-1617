@@ -52,3 +52,15 @@ Ein Prozess besteht aus folgenden drei Threads:
 Der lamportListener-Thread empfängt Nachrichten von anderen Prozessen und fügt diese einer geteilten MessageQueue zu.
 Aus diese MessageQueue entnimmt der lamportInterpreter-Thread die Nachrichten und interpretiert diese. Jenach Typ der Nachricht wird entsprechend reagiert. Der lamportWorker-Thread sendet nach start die RequestNachricht an alle anderen Prozesse und wartet dann darauf, dass der lamportInterpreter-Thread die Freigabe zum Betreten der _critical section_ gibt. 
 Hat der Worker-Thread drei mal eine 0 eingelesen, sendet er außerdem die Terminierungs-Nachricht an seinen Partnerprozess und beendet. 
+
+
+## Besonderheiten der Implementierung
+### Stärken:
+* Drei Threads mit geteilten Ressourcen, auf die threadsicher zugegriffen wird
+* Schnelle implementierung
+
+### Schwächen:
+* Deadlock nach Terminierung der ersten beiden Prozesse
+
+## Fazit
+Für die Realisierung dieser Aufgabe mussten einige Software-Patterns in der Theorie wiederholt werden, wie z.B. Producer/Consumer pattern. Das eigentliche Ziel, die Implementierung des Lamport-Algorithmus, wurde erreicht, obwohl das Programm nicht alle Anforderungen der Aufgabe erfüllt (s. "Deadlock nach remove"). 
